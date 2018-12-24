@@ -1,0 +1,9 @@
+{
+    "version": 2,
+    "name": "health-sucks",
+    "alias": ["health-sucks"],
+    "builds": [
+        {"src": "static/**/*", "use": "@now/static"},
+        {"src": "next.config.js", "use": "@now/next"}
+    ]
+}
