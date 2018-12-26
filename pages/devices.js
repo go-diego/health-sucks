@@ -85,7 +85,7 @@ export default class DevicesPage extends React.Component {
                                                         <p className="has-text-grey-light is-size-7">
                                                             {`Last synced: ${format(
                                                                 new Date(device.lastSyncTime),
-                                                                "ddd, MMM DD"
+                                                                "ddd, MMM DD @ hh:mm A"
                                                             )}`}
                                                         </p>
                                                         <p className="has-text-grey-light is-size-7">

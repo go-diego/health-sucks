@@ -34,6 +34,20 @@ export default class Fitbit {
         return response.json();
     }
 
+    async getFrequentActivities() {
+        const response = await fetch(`${this.BASE_URL}/activities/frequent.json`, {
+            headers: {...this.AUTH_HEADER}
+        });
+        return response.json();
+    }
+
+    async getWeekHeartRate() {
+        const response = await fetch(`${this.BASE_URL}/activities/heart/date/today/1w.json`, {
+            headers: {...this.AUTH_HEADER}
+        });
+        return response.json();
+    }
+
     async getDevices() {
         const response = await fetch(`${this.BASE_URL}/devices.json`, {
             headers: {...this.AUTH_HEADER}
