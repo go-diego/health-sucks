@@ -28,9 +28,16 @@ export default class Fitbit {
     }
 
     async getActivities() {
-        const feed = await fetch(`${this.BASE_URL}/activities.json`, {
+        const response = await fetch(`${this.BASE_URL}/activities.json`, {
             headers: {...this.AUTH_HEADER}
         });
-        return feed.json();
+        return response.json();
+    }
+
+    async getDevices() {
+        const response = await fetch(`${this.BASE_URL}/devices.json`, {
+            headers: {...this.AUTH_HEADER}
+        });
+        return response.json();
     }
 }

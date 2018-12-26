@@ -1,25 +1,33 @@
+import {Fragment} from "react";
 import MainLayout from "../containers/MainLayout";
 import Link from "next/link";
 import distanceInWordsStrict from "date-fns/distance_in_words_strict";
 import addSeconds from "date-fns/add_seconds";
 import Fitbit from "../api/fitbit.api";
 import Devices from "../api/device.api";
+import format from "date-fns/format";
 
 const DevicesApi = new Devices();
 
 export default class DevicesPage extends React.Component {
     static async getInitialProps() {
-        const devices = await DevicesApi.getAll();
+        let devices = [];
+        devices = await DevicesApi.getAll();
+        const promises = devices.map(device => {
+            const FitbitApi = new Fitbit(device.client_id, device.secret, device.access_token);
+            device.consent_url = FitbitApi.getConsentUrl();
 
-        return {
-            devices
-        };
+            return FitbitApi.getDevices().then(devices => {
+                return (device = {...device, ...devices[0]});
+            });
+        });
+
+        return Promise.all(promises).then(devices => {
+            return {
+                devices
+            };
+        });
     }
-
-    getConsentUrl = (clientId, secret) => {
-        const FitbitApi = new Fitbit(clientId, secret);
-        return FitbitApi.getConsentUrl();
-    };
 
     getAuthDaysLeft = (authDate, authPeriod) => {
         const authEndDate = addSeconds(new Date(authDate), authPeriod);
@@ -57,30 +65,36 @@ export default class DevicesPage extends React.Component {
                                                     {device.user}
                                                 </p>
                                                 <p className="has-text-grey-light">
-                                                    {device.client_id}
+                                                    {`${device.client_id} - ${
+                                                        device.deviceVersion
+                                                    }`}
                                                 </p>
                                             </div>
                                             <div className="d-flex flex-column">
-                                                <p className="has-text-grey-light is-size-7">
-                                                    {(!device.access_token &&
-                                                        "Not Authenticated") ||
-                                                        `${this.getAuthDaysLeft(
-                                                            device.authentication_date,
-                                                            device.access_token_expiration
-                                                        )} left`}
-                                                </p>
-                                                {!device.access_token && (
+                                                {(!device.access_token && (
                                                     <a
-                                                        href={this.getConsentUrl(
-                                                            device.client_id,
-                                                            device.secret
-                                                        )}
+                                                        href={device.consent_url}
                                                         onClick={e => e.stopPropagation()}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="button is-primary has-text-uppercase">
                                                         Authenticate
                                                     </a>
+                                                )) || (
+                                                    <Fragment>
+                                                        <p className="has-text-grey-light is-size-7">
+                                                            {`Last synced: ${format(
+                                                                new Date(device.lastSyncTime),
+                                                                "ddd, MMM DD"
+                                                            )}`}
+                                                        </p>
+                                                        <p className="has-text-grey-light is-size-7">
+                                                            {`${this.getAuthDaysLeft(
+                                                                device.authentication_date,
+                                                                device.access_token_expiration
+                                                            )} left`}
+                                                        </p>
+                                                    </Fragment>
                                                 )}
                                             </div>
                                         </label>
