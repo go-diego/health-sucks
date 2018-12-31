@@ -55,19 +55,20 @@ export default class DevicesPage extends React.Component {
                                 return (
                                     <Link
                                         key={device.id}
-                                        href={`/data?id=${device.client_id}&token=${
+                                        href={`/overview?id=${device.client_id}&token=${
                                             device.access_token
-                                        }&secret=${device.secret}`}
-                                        as={`/data/${device.client_id}`}>
+                                        }&secret=${device.secret}`}>
                                         <label className="panel-block d-flex justify-content-between">
                                             <div className="d-flex flex-column">
                                                 <p className="has-text-weight-bold">
                                                     {device.user}
                                                 </p>
                                                 <p className="has-text-grey-light">
-                                                    {`${device.client_id} - ${
+                                                    {`${device.client_id} ${
                                                         device.deviceVersion
-                                                    }`}
+                                                            ? `- ${device.deviceVersion}`
+                                                            : ""
+                                                    } `}
                                                 </p>
                                             </div>
                                             <div className="d-flex flex-column">

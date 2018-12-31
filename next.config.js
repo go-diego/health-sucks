@@ -29,7 +29,15 @@ module.exports = (phase, {defaultConfig}) => {
 
     const withImages = require("next-images");
     const withSass = require("@zeit/next-sass");
+    const rehypePrism = require("@mapbox/rehype-prism");
     const {withPlugins} = require("next-compose-plugins");
+    const withMDX = require("@zeit/next-mdx")({
+        extension: /\.(md|mdx)$/,
+        options: {
+            //mdPlugins: [images, emoji],
+            hastPlugins: [rehypePrism]
+        }
+    });
 
-    return withPlugins([[withSass], [withImages]], nextConfig)(phase, defaultConfig);
+    return withPlugins([[withSass], [withImages], [withMDX]], nextConfig)(phase, defaultConfig);
 };

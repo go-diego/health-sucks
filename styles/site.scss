@@ -1,6 +1,8 @@
 @import "./bootstrap";
 @import "./bulma";
 @import "./base";
+@import "./prism-theme";
+@import "./overrides";
 
 .root {
     display: flex;
